@@ -1,8 +1,10 @@
-.PHONY: all up down reset local migrate-up migrate-down test postgres app_logs postgres_logs lint .env .env.example help
+.PHONY: all up down reset local migrate-up migrate-down test postgres rabbit app_logs postgres_logs rabbit_logs_logs queues lint .env .env.example help
 .POSIX:
 .SILENT:
 
 -include .env.example .env
+
+GOOSE_CMD = goose -dir ./migrations postgres "user=${DB_USER} password=${DB_PASSWORD} dbname=hades-db host=localhost port=5433 sslmode=disable"
 
 all: up
 
@@ -15,7 +17,7 @@ up:
 	if [ ! -f config.yaml ]; then cp ./configs/config.full.yaml ./config.yaml; fi
 	if [ ! -f docker-compose.yaml ]; then cp ./deployments/docker-compose.full.yaml ./docker-compose.yaml; fi
 	if [ ! -f Dockerfile ]; then cp ./deployments/Dockerfile ./Dockerfile; fi
-	docker compose up -d postgres app
+	COMPOSE_BAKE=true docker compose up -d postgres app
 	rm -f Dockerfile
 
 down:
@@ -29,44 +31,49 @@ local:
 	if [ ! -f .env ]; then cat .env.example > .env; fi 
 	if [ ! -f config.yaml ]; then cp ./configs/config.dev.yaml ./config.yaml; fi 
 	if [ ! -f docker-compose.yaml ]; then cp ./deployments/docker-compose.dev.yaml ./docker-compose.yaml; fi
-	docker compose up -d
+	docker compose up -d postgres 
 	until docker exec postgres pg_isready -U ${DB_USER} > /dev/null 2>&1; do sleep 0.5; done
-	$(MAKE) --no-print-directory migrate-up
 	bash -c 'trap "exit 0" INT; go run ./cmd/hades/main.go'
 
 migrate-up:
-	for i in $$(seq 1 10); do \
-		migrate -path ./migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@localhost:5433/hades-db?sslmode=disable" up && exit 0; \
-		echo "Retry $$i/10..."; sleep 1; \
-	done; exit 1
+	@if command -v goose > /dev/null 2>&1; then $(GOOSE_CMD) up; else echo "You need Goose migration tool to use this command!"; fi
 
 migrate-down:
-	migrate -path ./migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@localhost:5433/hades-db?sslmode=disable" down
+	@if command -v goose > /dev/null 2>&1; then $(GOOSE_CMD) down; else echo "You need Goose migration tool to use this command!"; fi
 
 test:
-	if [ ! -f .env ]; then cat .env.example > .env; fi
-	if [ ! -f config.yaml ]; then cp ./configs/config.test.yaml ./config.yaml; fi
-	if [ ! -f docker-compose.yaml ]; then cp ./deployments/docker-compose.test.yaml ./docker-compose.yaml; fi
-	docker compose -f docker-compose.yaml up -d postgres-test
-	until docker exec postgres-test pg_isready -U ${DB_USER} -d hermes_test > /dev/null 2>&1; do sleep 0.5; done
+	cat .env.example > .env
+	cp ./configs/config.dev.yaml ./config.yaml
+	cp ./deployments/docker-compose.dev.yaml ./docker-compose.yaml
+	go test -cover ./internal/handler/v1/...
+	go test -cover ./internal/service/impl/...
+	docker compose -f docker-compose.yaml up -d postgres-test > /dev/null 2>&1
+	until docker exec postgres-test pg_isready -U ${DB_USER} > /dev/null 2>&1; do sleep 0.5; done
 	for i in $$(seq 1 10); do \
-		migrate -path ./migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@localhost:5433/hermes_test?sslmode=disable" up && break; \
-		echo "Retry $$i/10..."; sleep 1; \
-	done
-	echo "Running tests, please be patient (≈2 min)"
-	docker compose -f docker-compose.yaml run --rm app-test > .temp 2>/dev/null
-	cat .temp; rm -f .temp
-	docker compose -f docker-compose.yaml down -v > /dev/null 2>&1
-	rm -f docker-compose.yaml config.yaml
+		migrate -path ./migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@localhost:5434/kairos_test?sslmode=disable" up > /dev/null 2>&1 && exit 0; sleep 1; \
+	done; exit 1
+	go test ./internal/repository/postgres -cover
+	docker compose -f docker-compose.yaml stop postgres-test > /dev/null 2>&1
+	docker compose -f docker-compose.yaml rm -f postgres-test > /dev/null 2>&1
+	rm -f docker-compose.yaml config.yaml .env
 
 postgres:
 	docker compose exec postgres psql -U ${DB_USER} -d hades-db
+
+rabbit:
+	docker compose exec bash
 
 app_logs:
 	docker compose logs --tail 10 app
 
 postgres_logs:
 	docker compose logs --tail 10 postgres
+
+rabbit_logs:
+	docker compose logs --tail 10
+
+queues:
+	docker compose exec rabbitmqctl list_queues
 
 lint:
 	golangci-lint run ./...
@@ -76,16 +83,19 @@ lint:
 
 help:
 	@echo " ———————————————————————————————————————————————————————————————————————————————————— "
-	@echo "| up             | Start all services (postgres, app) in background                  |"
+	@echo "| up             | Start all services (postgres,, app) in background        |"
 	@echo "| down           | Stop and remove all containers, networks, and temporary files     |"
 	@echo "| reset          | Remove postgres Docker volume                                     |"
 	@echo "| local          | Start local dev environment (go 1.25.1 required)                  |"
-	@echo "| migrate-up     | Apply all database migrations                                     |"
-	@echo "| migrate-down   | Rollback all database migrations                                  |"
+	@echo "| migrate-up     | Apply all database migrations (Goose migration tool required)     |"
+	@echo "| migrate-down   | Rollback all database migrations (Goose migration tool required)  |"
 	@echo "| test           | Run unit and integration tests                                    |"
 	@echo "| postgres       | Open psql shell inside postgres container                         |"
+	@echo "| rabbit         | Open shell inside container                              |"
 	@echo "| app_logs       | Show last 10 lines of app logs                                    |"
 	@echo "| postgres_logs  | Show last 10 lines of postgres logs                               |"
+	@echo "| rabbit_logs    | Show last 10 lines of logs                               |"
+	@echo "| queues         | List queues in                                           |"
 	@echo "| lint           | Run golangci-lint                                                 |"
 	@echo " ———————————————————————————————————————————————————————————————————————————————————— "
 

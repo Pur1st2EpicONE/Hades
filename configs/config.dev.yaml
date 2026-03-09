@@ -13,6 +13,8 @@ server:
 
 # Database (PostgreSQL) configuration
 database:
+  goose_dialect: "postgres"                    # Dialect used by goose migrations
+  goose_migrations_directory: "./migrations"   # Directory containing migration files
   host: localhost                              # Database host
   port: "5433"                                 # Database port
   dbname: hades-db                             # Database name

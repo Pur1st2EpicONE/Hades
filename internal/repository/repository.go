@@ -6,41 +6,19 @@ import (
 	"Hades/internal/models"
 	"Hades/internal/repository/postgres"
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/wb-go/wbf/dbpg"
 )
 
-type AuthStorage interface {
-	CreateUser(ctx context.Context, user models.User) (int64, error)
-	GetUserByLogin(ctx context.Context, login string) (models.User, error)
-}
-
-type CoreStorage interface {
-	Transaction(ctx context.Context, fn func(tx *sql.Tx, ctx context.Context) error) error
-	CreateEvent(ctx context.Context, event *models.Event) error
-	GetEventForBooking(tx *sql.Tx, ctx context.Context, eventUUID string) (*models.Event, error)
-	CreateBooking(tx *sql.Tx, ctx context.Context, booking *models.Booking) (int64, error)
-	UpdateEventSeats(tx *sql.Tx, ctx context.Context, increment bool, eventID int64) error
-	GetBookingForConfirm(tx *sql.Tx, ctx context.Context, userID int64, eventUUID string) (*models.Booking, error)
-	UpdateBookingStatus(tx *sql.Tx, ctx context.Context, bookingID int64, status string) error
-	CancelBooking(tx *sql.Tx, ctx context.Context, bookingID int64) (int64, error)
-	GetInfo(ctx context.Context, eventUUID string) (*models.Event, error)
-	GetAllEvents(ctx context.Context) ([]models.Event, error)
+type Storage interface {
+	CreateItem(ctx context.Context, item models.Item) (models.Item, error)
+	DeleteItem(ctx context.Context, itemID int) error
 	Close()
 }
 
-type Storage struct {
-	AuthStorage
-	CoreStorage
-}
-
-func NewStorage(logger logger.Logger, config config.Storage, db *dbpg.DB) *Storage {
-	return &Storage{
-		AuthStorage: postgres.NewAuthStorage(logger, config, db),
-		CoreStorage: postgres.NewCoreStorage(logger, config, db),
-	}
+func NewStorage(logger logger.Logger, config config.Storage, db *dbpg.DB) Storage {
+	return postgres.NewStorage(logger, config, db)
 }
 
 func ConnectDB(config config.Storage) (*dbpg.DB, error) {

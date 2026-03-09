@@ -1,35 +1,17 @@
 package models
 
-import "time"
+import (
+	"time"
 
-type User struct {
-	ID       int64
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
-type Event struct {
-	DBID        int64
-	ID          string
-	UserID      int64
-	Title       string
-	Description string
-	Date        time.Time
-	Seats       int
-	BookingTTL  time.Duration
-}
-
-type Booking struct {
-	ID        int64
-	UserID    int64
-	EventID   int64
-	Status    string
-	CreatedAt time.Time
-	ExpiresAt time.Time
-}
-
-const (
-	StatusPending   = "pending"
-	StatusConfirmed = "confirmed"
-	StatusExpired   = "expired"
+	"github.com/shopspring/decimal"
 )
+
+type Item struct {
+	ID          int             `db:"id" json:"id"`
+	Type        string          `db:"type" json:"type"`
+	Amount      decimal.Decimal `db:"amount" json:"amount"`
+	Date        time.Time       `db:"date" json:"date"`
+	Category    string          `db:"category" json:"category"`
+	Description string          `db:"description" json:"description,omitempty"`
+	CreatedAt   time.Time       `db:"created_at" json:"created_at"`
+}

@@ -5,89 +5,83 @@ import (
 	"Hades/internal/models"
 	"strings"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
-const minBookingTTL = 1 * time.Minute
-const maxBookingTTL = 24 * time.Hour
+const income = "income"
+const expense = "expense"
+const billion = 1e9
 
-func validateUser(user models.User) error {
-	if user.Login == "" {
-		return errs.ErrEmptyLogin
-	}
-	if user.Password == "" {
-		return errs.ErrEmptyPassword
-	}
-	return nil
-}
+func validateItem(item models.Item) error {
 
-func validateEvent(event *models.Event) error {
-
-	if err := validateTitle(event.Title); err != nil {
+	if err := validateType(item.Type); err != nil {
 		return err
 	}
 
-	if err := validateDescription(event.Description); err != nil {
+	if err := validateAmount(item.Amount); err != nil {
 		return err
 	}
 
-	if err := validateDate(event.Date); err != nil {
+	if err := validateDate(item.Date); err != nil {
 		return err
 	}
 
-	if err := validateSeats(event.Seats); err != nil {
+	if err := validateCategory(item.Category); err != nil {
 		return err
 	}
 
-	if err := validateBookingTTL(event.BookingTTL); err != nil {
+	if err := validateDescription(item.Description); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func validateTitle(title string) error {
-
-	title = strings.TrimSpace(title)
-
-	if title == "" {
-		return errs.ErrMissingTitle
-	}
-
-	if len(title) < 3 {
-		return errs.ErrTitleTooShort
-	}
-
-	if len(title) > 200 {
-		return errs.ErrTitleTooLong
 	}
 
 	return nil
 
 }
 
-func validateDescription(desc string) error {
-	if len(desc) > 2000 {
-		return errs.ErrDescriptionTooLong
+func validateType(t string) error {
+
+	t = strings.TrimSpace(t)
+
+	if t == "" {
+		return errs.ErrMissingType
 	}
+
+	if t != income && t != expense {
+		return errs.ErrInvalidType
+	}
+
 	return nil
+
 }
 
-func validateDate(t time.Time) error {
+func validateAmount(amount decimal.Decimal) error {
 
-	if t.IsZero() {
-		return errs.ErrMissingDate
+	if amount.LessThan(decimal.Zero) {
+		return errs.ErrNegativeAmount
 	}
+
+	if amount.IsZero() {
+		return errs.ErrZeroAmount
+	}
+
+	if amount.GreaterThan(decimal.NewFromInt(billion)) {
+		return errs.ErrAmountTooLarge
+	}
+
+	return nil
+
+}
+
+func validateDate(d time.Time) error {
 
 	now := time.Now().UTC()
 
-	if t.Before(now) {
-		return errs.ErrDateInPast
-	}
-	if t.Before(now.Add(24 * time.Hour)) {
-		return errs.ErrDateTooSoon
+	if d.Before(now.AddDate(-1, 0, 0)) {
+		return errs.ErrDateTooOld
 	}
 
-	if t.After(now.AddDate(1, 0, 0)) {
+	if d.After(now.AddDate(1, 0, 0)) {
 		return errs.ErrDateTooFar
 	}
 
@@ -95,26 +89,29 @@ func validateDate(t time.Time) error {
 
 }
 
-func validateSeats(seats int) error {
-	if seats <= 0 {
-		return errs.ErrInvalidSeatCount
+func validateCategory(category string) error {
+
+	category = strings.TrimSpace(category)
+
+	if category == "" {
+		return errs.ErrMissingCategory
 	}
-	if seats > 10000 {
-		return errs.ErrTooManySeats
+
+	if len(category) < 3 {
+		return errs.ErrCategoryTooShort
 	}
+
+	if len(category) > 100 {
+		return errs.ErrCategoryTooLong
+	}
+
 	return nil
+
 }
 
-func validateBookingTTL(ttl time.Duration) error {
-
-	if ttl < minBookingTTL {
-		return errs.ErrBookingTTLTooShort
+func validateDescription(desc string) error {
+	if len(desc) > 1000 {
+		return errs.ErrDescriptionTooLong
 	}
-
-	if ttl > maxBookingTTL {
-		return errs.ErrBookingTTLTooLong
-	}
-
 	return nil
-
 }

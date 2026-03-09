@@ -7,22 +7,28 @@ import (
 	"github.com/wb-go/wbf/dbpg"
 )
 
-type AuthStorage struct {
+type Storage struct {
 	db     *dbpg.DB
 	logger logger.Logger
 	config config.Storage
 }
 
-func NewAuthStorage(logger logger.Logger, config config.Storage, db *dbpg.DB) *AuthStorage {
-	return &AuthStorage{db: db, logger: logger, config: config}
+func NewStorage(logger logger.Logger, config config.Storage, db *dbpg.DB) *Storage {
+	return &Storage{db: db, logger: logger, config: config}
 }
 
-type CoreStorage struct {
-	db     *dbpg.DB
-	logger logger.Logger
-	config config.Storage
+func (s *Storage) Close() {
+	if err := s.db.Master.Close(); err != nil {
+		s.logger.LogError("postgres — failed to close properly", err, "layer", "repository.postgres")
+	} else {
+		s.logger.LogInfo("postgres — database closed", "layer", "repository.postgres")
+	}
 }
 
-func NewCoreStorage(logger logger.Logger, config config.Storage, db *dbpg.DB) *CoreStorage {
-	return &CoreStorage{db: db, logger: logger, config: config}
+func (s *Storage) DB() *dbpg.DB {
+	return s.db
+}
+
+func (s *Storage) Config() *config.Storage {
+	return &s.config
 }

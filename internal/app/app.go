@@ -7,13 +7,12 @@ import (
 	"Hades/internal/repository"
 	"Hades/internal/server"
 	"Hades/internal/service"
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"context"
 
 	"github.com/pressly/goose/v3"
 	"github.com/wb-go/wbf/dbpg"
@@ -25,7 +24,7 @@ type App struct {
 	server  server.Server
 	ctx     context.Context
 	cancel  context.CancelFunc
-	storage *repository.Storage
+	storage repository.Storage
 }
 
 func Boot() *App {
@@ -73,8 +72,8 @@ func wireApp(db *dbpg.DB, logger logger.Logger, logFile *os.File, config config.
 
 	ctx, cancel := newContext(logger)
 	storage := repository.NewStorage(logger, config.Storage, db)
-	service := service.NewService(logger, config.Service, storage)
-	server := server.NewServer(logger, config.Server, handler.NewHandler(config.Server, service), cancel)
+	service := service.NewService(logger, storage)
+	server := server.NewServer(logger, config.Server, handler.NewHandler(service), cancel)
 
 	return &App{
 		logger:  logger,
@@ -105,12 +104,6 @@ func newContext(logger logger.Logger) (context.Context, context.CancelFunc) {
 
 	return ctx, cancel
 
-}
-
-func processFunc(service service.Service) func(ctx context.Context, bookingID int64) error {
-	return func(ctx context.Context, bookingID int64) error {
-		return service.CancelBooking(ctx, bookingID)
-	}
 }
 
 func (a *App) Run() {
