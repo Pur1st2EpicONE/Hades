@@ -32,11 +32,12 @@ func (h *Handler) CreateItem(c *ginext.Context) {
 	}
 
 	respondCreated(c, ItemResponseDTO{
-		ID:          result.ID,
-		Type:        result.Type,
-		Amount:      result.Amount,
+		ID:          result,
+		Type:        request.Type,
+		Amount:      request.Amount,
 		Date:        request.Date,
-		Description: result.Description,
+		Category:    request.Category,
+		Description: request.Description,
 	})
 
 }

@@ -46,6 +46,7 @@ func mapErrorToStatus(err error) (int, string) {
 	case errors.Is(err, errs.ErrInvalidJSON),
 		errors.Is(err, errs.ErrInvalidID),
 		errors.Is(err, errs.ErrMissingType),
+		errors.Is(err, errs.ErrInvalidSortOrder),
 		errors.Is(err, errs.ErrInvalidType),
 		errors.Is(err, errs.ErrZeroAmount),
 		errors.Is(err, errs.ErrNegativeAmount),

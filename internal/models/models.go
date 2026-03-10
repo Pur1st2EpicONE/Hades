@@ -7,11 +7,19 @@ import (
 )
 
 type Item struct {
-	ID          int             `db:"id" json:"id"`
-	Type        string          `db:"type" json:"type"`
-	Amount      decimal.Decimal `db:"amount" json:"amount"`
-	Date        time.Time       `db:"date" json:"date"`
-	Category    string          `db:"category" json:"category"`
-	Description string          `db:"description" json:"description,omitempty"`
-	CreatedAt   time.Time       `db:"created_at" json:"created_at"`
+	ID          int             `json:"id"`
+	Type        string          `json:"type"`
+	Amount      decimal.Decimal `json:"amount"`
+	Date        time.Time       `json:"date"`
+	Category    string          `json:"category"`
+	Description string          `json:"description,omitempty"`
+	CreatedAt   time.Time       `json:"created_at"`
+}
+
+type Options struct {
+	From     time.Time
+	To       time.Time
+	Category string
+	Type     string
+	Sort     string
 }

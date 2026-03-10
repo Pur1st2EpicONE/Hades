@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-func (s *Service) CreateItem(ctx context.Context, item models.Item) (models.Item, error) {
+func (s *Service) CreateItem(ctx context.Context, item models.Item) (int, error) {
 
 	if err := validateItem(item); err != nil {
-		return models.Item{}, err
+		return 0, err
 	}
 
 	initialize(&item)
@@ -17,7 +17,7 @@ func (s *Service) CreateItem(ctx context.Context, item models.Item) (models.Item
 	result, err := s.storage.CreateItem(ctx, item)
 	if err != nil {
 		s.logger.LogError("service — failed to save item to storage", err, "layer", "service.impl")
-		return models.Item{}, err
+		return 0, err
 	}
 
 	return result, nil

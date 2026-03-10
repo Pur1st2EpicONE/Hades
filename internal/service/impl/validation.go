@@ -9,9 +9,11 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-const income = "income"
-const expense = "expense"
-const billion = 1e9
+const (
+	income    = "income"
+	expense   = "expense"
+	maxAmount = 1e9
+)
 
 func validateItem(item models.Item) error {
 
@@ -65,7 +67,7 @@ func validateAmount(amount decimal.Decimal) error {
 		return errs.ErrZeroAmount
 	}
 
-	if amount.GreaterThan(decimal.NewFromInt(billion)) {
+	if amount.GreaterThan(decimal.NewFromInt(maxAmount)) {
 		return errs.ErrAmountTooLarge
 	}
 
@@ -114,4 +116,18 @@ func validateDescription(desc string) error {
 		return errs.ErrDescriptionTooLong
 	}
 	return nil
+}
+
+func validateOptions(options models.Options) error {
+
+	if options.Type != "" && options.Type != income && options.Type != expense {
+		return errs.ErrInvalidType
+	}
+
+	if options.Sort != "" && options.Sort != "ASC" && options.Sort != "DESC" {
+		return errs.ErrInvalidSortOrder
+	}
+
+	return nil
+
 }

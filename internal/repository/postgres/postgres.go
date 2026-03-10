@@ -24,11 +24,3 @@ func (s *Storage) Close() {
 		s.logger.LogInfo("postgres — database closed", "layer", "repository.postgres")
 	}
 }
-
-func (s *Storage) DB() *dbpg.DB {
-	return s.db
-}
-
-func (s *Storage) Config() *config.Storage {
-	return &s.config
-}

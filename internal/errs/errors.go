@@ -8,6 +8,7 @@ var (
 	ErrInternal           = errors.New("internal server error")                       // internal server error
 	ErrMissingType        = errors.New("missing type")                                // missing type
 	ErrInvalidType        = errors.New("invalid type")                                // invalid type
+	ErrInvalidSortOrder   = errors.New("invalid sort order")                          // invalid sort order
 	ErrZeroAmount         = errors.New("zero amount")                                 // zero amount
 	ErrNegativeAmount     = errors.New("negative amount")                             // negative amount
 	ErrAmountTooLarge     = errors.New("amount too large")                            // amount too large
