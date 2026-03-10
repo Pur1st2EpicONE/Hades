@@ -12,11 +12,19 @@ type CreateItemDTO struct {
 	Description string          `json:"description,omitempty"`
 }
 
-type CreateItemResponseDTO struct {
+type ItemResponseDTO struct {
 	ID          int
 	Type        string
 	Amount      decimal.Decimal
 	Date        string
 	Category    string
 	Description string
+}
+
+type UpdateItemDTO struct {
+	Type        string          `json:"type"`
+	Amount      decimal.Decimal `json:"amount"`
+	Date        string          `json:"date"`
+	Category    string          `json:"category"`
+	Description string          `json:"description,omitempty"`
 }

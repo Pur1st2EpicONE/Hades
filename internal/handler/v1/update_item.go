@@ -3,14 +3,20 @@ package v1
 import (
 	"Hades/internal/errs"
 	"Hades/internal/models"
+	"strconv"
 
 	"github.com/wb-go/wbf/ginext"
 )
 
-func (h *Handler) CreateItem(c *ginext.Context) {
+func (h *Handler) UpdateItem(c *ginext.Context) {
 
-	var request CreateItemDTO
+	itemID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		respondError(c, errs.ErrInvalidID)
+		return
+	}
 
+	var request UpdateItemDTO
 	if err := c.ShouldBindJSON(&request); err != nil {
 		respondError(c, errs.ErrInvalidJSON)
 		return
@@ -22,20 +28,22 @@ func (h *Handler) CreateItem(c *ginext.Context) {
 		return
 	}
 
-	result, err := h.service.CreateItem(c.Request.Context(), models.Item{
+	result, err := h.service.UpdateItem(c.Request.Context(), itemID, models.Item{
 		Type: request.Type, Amount: request.Amount,
 		Date: date, Category: request.Category,
-		Description: request.Description})
+		Description: request.Description,
+	})
 	if err != nil {
 		respondError(c, err)
 		return
 	}
 
-	respondCreated(c, ItemResponseDTO{
+	respondOK(c, ItemResponseDTO{
 		ID:          result.ID,
 		Type:        result.Type,
 		Amount:      result.Amount,
 		Date:        request.Date,
+		Category:    result.Category,
 		Description: result.Description,
 	})
 

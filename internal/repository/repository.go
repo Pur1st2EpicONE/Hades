@@ -13,6 +13,7 @@ import (
 
 type Storage interface {
 	CreateItem(ctx context.Context, item models.Item) (models.Item, error)
+	UpdateItem(ctx context.Context, itemID int, updatedItem models.Item) (models.Item, error)
 	DeleteItem(ctx context.Context, itemID int) error
 	Close()
 }
