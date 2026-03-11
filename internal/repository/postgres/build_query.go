@@ -49,7 +49,7 @@ func buildCondition(options models.Options) (string, []any) {
 	}
 
 	if options.Sort != "" {
-		condition += fmt.Sprintf(` ORDER BY date %s`, options.Sort)
+		condition += fmt.Sprintf(`ORDER BY %s %s`, options.SortBy, options.Sort)
 	}
 
 	return condition, args

@@ -2,12 +2,48 @@ package v1
 
 import (
 	"Hades/internal/errs"
+	"Hades/internal/models"
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/wb-go/wbf/ginext"
 )
+
+func parseQuery(c *ginext.Context) (models.Options, error) {
+
+	fromStr := c.Query("from")
+	toStr := c.Query("to")
+
+	var from, to time.Time
+	var err error
+
+	if fromStr != "" {
+		from, err = parseTime(fromStr)
+		if err != nil {
+			return models.Options{}, err
+		}
+	}
+
+	if toStr != "" {
+		to, err = parseTime(toStr)
+		if err != nil {
+			return models.Options{}, err
+		}
+	}
+
+	return models.Options{
+		Category: c.Query("category"),
+		Type:     c.Query("type"),
+		Sort:     strings.ToUpper(c.Query("sort")),
+		SortBy:   strings.ToLower(c.Query("sort_by")),
+		From:     from,
+		To:       to,
+		GroupBy:  strings.ToLower(c.Query("group_by")),
+	}, nil
+
+}
 
 func parseTime(timeStr string) (time.Time, error) {
 
@@ -47,6 +83,7 @@ func mapErrorToStatus(err error) (int, string) {
 		errors.Is(err, errs.ErrInvalidID),
 		errors.Is(err, errs.ErrMissingType),
 		errors.Is(err, errs.ErrInvalidSortOrder),
+		errors.Is(err, errs.ErrInvalidSortBy),
 		errors.Is(err, errs.ErrInvalidType),
 		errors.Is(err, errs.ErrZeroAmount),
 		errors.Is(err, errs.ErrNegativeAmount),

@@ -9,6 +9,7 @@ var (
 	ErrMissingType        = errors.New("missing type")                                // missing type
 	ErrInvalidType        = errors.New("invalid type")                                // invalid type
 	ErrInvalidSortOrder   = errors.New("invalid sort order")                          // invalid sort order
+	ErrInvalidSortBy      = errors.New("invalid sort_by field")                       // invalid sort_by field
 	ErrZeroAmount         = errors.New("zero amount")                                 // zero amount
 	ErrNegativeAmount     = errors.New("negative amount")                             // negative amount
 	ErrAmountTooLarge     = errors.New("amount too large")                            // amount too large

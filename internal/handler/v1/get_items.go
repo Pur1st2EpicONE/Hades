@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"Hades/internal/models"
-	"strings"
 	"time"
 
 	"github.com/wb-go/wbf/ginext"
@@ -36,37 +34,5 @@ func (h *Handler) GetItems(c *ginext.Context) {
 	}
 
 	respondOK(c, response)
-
-}
-
-func parseQuery(c *ginext.Context) (models.Options, error) {
-
-	fromStr := c.Query("from")
-	toStr := c.Query("to")
-
-	var from, to time.Time
-	var err error
-
-	if fromStr != "" {
-		from, err = parseTime(fromStr)
-		if err != nil {
-			return models.Options{}, err
-		}
-	}
-
-	if toStr != "" {
-		to, err = parseTime(toStr)
-		if err != nil {
-			return models.Options{}, err
-		}
-	}
-
-	return models.Options{
-		Category: c.Query("category"),
-		Type:     c.Query("type"),
-		Sort:     strings.ToUpper(c.Query("sort")),
-		From:     from,
-		To:       to,
-	}, nil
 
 }

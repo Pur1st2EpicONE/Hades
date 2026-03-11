@@ -7,7 +7,7 @@ import (
 
 func (s *Service) GetItems(ctx context.Context, options models.Options) ([]models.Item, error) {
 
-	if err := validateOptions(options); err != nil {
+	if err := validateOptions(&options); err != nil {
 		return nil, err
 	}
 

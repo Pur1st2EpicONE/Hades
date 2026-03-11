@@ -7,7 +7,7 @@ import (
 
 func (s *Service) GetAnalytics(ctx context.Context, options models.Options) (models.Analytics, error) {
 
-	if err := validateOptions(options); err != nil {
+	if err := validateOptions(&options); err != nil {
 		return models.Analytics{}, err
 	}
 

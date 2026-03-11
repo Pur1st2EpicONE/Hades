@@ -118,7 +118,7 @@ func validateDescription(desc string) error {
 	return nil
 }
 
-func validateOptions(options models.Options) error {
+func validateOptions(options *models.Options) error {
 
 	if options.Type != "" && options.Type != income && options.Type != expense {
 		return errs.ErrInvalidType
@@ -126,6 +126,16 @@ func validateOptions(options models.Options) error {
 
 	if options.Sort != "" && options.Sort != "ASC" && options.Sort != "DESC" {
 		return errs.ErrInvalidSortOrder
+	}
+
+	switch options.SortBy {
+	case "", "date", "amount", "type":
+	default:
+		return errs.ErrInvalidSortBy
+	}
+
+	if options.SortBy == "" {
+		options.SortBy = "date"
 	}
 
 	return nil
