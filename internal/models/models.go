@@ -23,3 +23,13 @@ type Options struct {
 	Type     string
 	Sort     string
 }
+
+type Analytics struct {
+	Count        int
+	TotalIncome  decimal.Decimal
+	TotalExpense decimal.Decimal
+	Balance      decimal.Decimal
+	AvgAmount    decimal.Decimal
+	Median       decimal.Decimal
+	Percentile90 decimal.Decimal
+}

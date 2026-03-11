@@ -22,6 +22,8 @@ func NewHandler(service service.Service) http.Handler {
 	apiV1.PUT("/items/:id", handlerV1.UpdateItem)
 	apiV1.DELETE("/items/:id", handlerV1.DeleteItem)
 
+	apiV1.GET("/analytics", handlerV1.GetAnalytics)
+
 	return handler
 
 }

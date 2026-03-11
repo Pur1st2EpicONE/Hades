@@ -9,5 +9,9 @@ CREATE TABLE IF NOT EXISTS items (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
+CREATE INDEX IF NOT EXISTS idx_items_date ON items (date);
+CREATE INDEX IF NOT EXISTS idx_items_type ON items (type);
+CREATE INDEX IF NOT EXISTS idx_items_category ON items (category);
+
 -- +goose Down
 DROP TABLE IF EXISTS items CASCADE;
