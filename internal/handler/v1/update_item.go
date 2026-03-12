@@ -28,7 +28,7 @@ func (h *Handler) UpdateItem(c *ginext.Context) {
 		return
 	}
 
-	result, err := h.service.UpdateItem(c.Request.Context(), itemID, models.Item{
+	updatedItem, err := h.service.UpdateItem(c.Request.Context(), itemID, models.Item{
 		Type: request.Type, Amount: request.Amount,
 		Date: date, Category: request.Category,
 		Description: request.Description,
@@ -38,13 +38,6 @@ func (h *Handler) UpdateItem(c *ginext.Context) {
 		return
 	}
 
-	respondOK(c, ItemResponseDTO{
-		ID:          result.ID,
-		Type:        result.Type,
-		Amount:      result.Amount,
-		Date:        request.Date,
-		Category:    result.Category,
-		Description: result.Description,
-	})
+	respondOK(c, updatedItem)
 
 }

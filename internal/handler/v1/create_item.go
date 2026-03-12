@@ -22,22 +22,18 @@ func (h *Handler) CreateItem(c *ginext.Context) {
 		return
 	}
 
-	result, err := h.service.CreateItem(c.Request.Context(), models.Item{
-		Type: request.Type, Amount: request.Amount,
-		Date: date, Category: request.Category,
-		Description: request.Description})
+	createdItem, err := h.service.CreateItem(c.Request.Context(), models.Item{
+		Type:        request.Type,
+		Amount:      request.Amount,
+		Date:        date,
+		Category:    request.Category,
+		Description: request.Description,
+	})
 	if err != nil {
 		respondError(c, err)
 		return
 	}
 
-	respondCreated(c, ItemResponseDTO{
-		ID:          result,
-		Type:        request.Type,
-		Amount:      request.Amount,
-		Date:        request.Date,
-		Category:    request.Category,
-		Description: request.Description,
-	})
+	respondCreated(c, createdItem)
 
 }

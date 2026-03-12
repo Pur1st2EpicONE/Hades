@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	income    = "income"
-	expense   = "expense"
-	maxAmount = 1e9
+	income        = "income"
+	expense       = "expense"
+	maxAmount     = 1e9
+	defaultSortBy = "date"
 )
 
 func validateItem(item models.Item) error {
@@ -135,7 +136,7 @@ func validateOptions(options *models.Options) error {
 	}
 
 	if options.SortBy == "" {
-		options.SortBy = "date"
+		options.SortBy = defaultSortBy
 	}
 
 	return nil

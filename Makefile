@@ -60,20 +60,11 @@ test:
 postgres:
 	docker compose exec postgres psql -U ${DB_USER} -d hades-db
 
-rabbit:
-	docker compose exec bash
-
 app_logs:
 	docker compose logs --tail 10 app
 
 postgres_logs:
 	docker compose logs --tail 10 postgres
-
-rabbit_logs:
-	docker compose logs --tail 10
-
-queues:
-	docker compose exec rabbitmqctl list_queues
 
 lint:
 	golangci-lint run ./...
@@ -83,7 +74,7 @@ lint:
 
 help:
 	@echo " ———————————————————————————————————————————————————————————————————————————————————— "
-	@echo "| up             | Start all services (postgres,, app) in background        |"
+	@echo "| up             | Start all services (postgres, app) in background                  |"
 	@echo "| down           | Stop and remove all containers, networks, and temporary files     |"
 	@echo "| reset          | Remove postgres Docker volume                                     |"
 	@echo "| local          | Start local dev environment (go 1.25.1 required)                  |"
@@ -91,14 +82,12 @@ help:
 	@echo "| migrate-down   | Rollback all database migrations (Goose migration tool required)  |"
 	@echo "| test           | Run unit and integration tests                                    |"
 	@echo "| postgres       | Open psql shell inside postgres container                         |"
-	@echo "| rabbit         | Open shell inside container                              |"
 	@echo "| app_logs       | Show last 10 lines of app logs                                    |"
 	@echo "| postgres_logs  | Show last 10 lines of postgres logs                               |"
-	@echo "| rabbit_logs    | Show last 10 lines of logs                               |"
-	@echo "| queues         | List queues in                                           |"
 	@echo "| lint           | Run golangci-lint                                                 |"
 	@echo " ———————————————————————————————————————————————————————————————————————————————————— "
 
 .DEFAULT:
 	@echo " No rule to make target '$@'. Available make targets:"
 	@$(MAKE) --no-print-directory help
+	@exit 0

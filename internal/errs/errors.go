@@ -6,6 +6,8 @@ var (
 	ErrInvalidJSON        = errors.New("invalid JSON format")                         // invalid JSON format
 	ErrInvalidID          = errors.New("invalid itemID")                              // invalid itemID
 	ErrInternal           = errors.New("internal server error")                       // internal server error
+	ErrUnsupportedType    = errors.New("unsupported type for CSV export")             // unsupported type for CSV export
+	ErrFailedCSV          = errors.New("failed to generate CSV")                      // failed to generate CSV
 	ErrMissingType        = errors.New("missing type")                                // missing type
 	ErrInvalidType        = errors.New("invalid type")                                // invalid type
 	ErrInvalidSortOrder   = errors.New("invalid sort order")                          // invalid sort order

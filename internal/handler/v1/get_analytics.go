@@ -18,6 +18,6 @@ func (h *Handler) GetAnalytics(c *ginext.Context) {
 		return
 	}
 
-	respondOK(c, analytics)
+	fmtRespond(c, analytics, "analytics")
 
 }

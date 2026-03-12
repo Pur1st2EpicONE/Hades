@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"time"
-
 	"github.com/wb-go/wbf/ginext"
 )
 
@@ -20,19 +18,6 @@ func (h *Handler) GetItems(c *ginext.Context) {
 		return
 	}
 
-	response := make([]ItemResponseDTO, len(items))
-
-	for i, item := range items {
-		response[i] = ItemResponseDTO{
-			ID:          item.ID,
-			Type:        item.Type,
-			Amount:      item.Amount,
-			Date:        item.Date.Format(time.RFC3339),
-			Category:    item.Category,
-			Description: item.Description,
-		}
-	}
-
-	respondOK(c, response)
+	fmtRespond(c, items, "items")
 
 }

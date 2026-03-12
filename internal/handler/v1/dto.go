@@ -19,12 +19,3 @@ type UpdateItemDTO struct {
 	Category    string          `json:"category"`
 	Description string          `json:"description,omitempty"`
 }
-
-type ItemResponseDTO struct {
-	ID          int
-	Type        string
-	Amount      decimal.Decimal
-	Date        string
-	Category    string
-	Description string
-}

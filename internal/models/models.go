@@ -17,13 +17,14 @@ type Item struct {
 }
 
 type Options struct {
-	Category string
-	Type     string
-	From     time.Time
-	To       time.Time
-	Sort     string
-	SortBy   string
-	GroupBy  string
+	Category     string
+	Type         string
+	From         time.Time
+	To           time.Time
+	Sort         string
+	SortBy       string
+	GroupBy      string
+	ExportFormat string
 }
 
 type Analytics struct {
