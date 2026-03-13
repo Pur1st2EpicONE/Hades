@@ -51,18 +51,26 @@ func parseQuery(c *ginext.Context) (models.Options, error) {
 }
 
 func parseTime(timeStr string) (time.Time, error) {
-
 	if timeStr == "" {
 		return time.Time{}, errs.ErrMissingDate
 	}
 
-	validTime, err := time.Parse(time.RFC3339, timeStr)
-	if err != nil {
-		return time.Time{}, errs.ErrInvalidDate
+	layouts := []string{
+		time.RFC3339,
+		"2006-01-02T15:04:05",
+		"2006-01-02",
+		"2006-01-02T15:04:05-07:00",
+		"2006-01-02T15:04:05Z07:00",
 	}
 
-	return validTime.UTC(), nil
+	for _, layout := range layouts {
+		t, err := time.Parse(layout, timeStr)
+		if err == nil {
+			return t.UTC(), nil
+		}
+	}
 
+	return time.Time{}, errs.ErrInvalidDate
 }
 
 func respondCreated(c *ginext.Context, response any) {
@@ -96,6 +104,8 @@ func writeCSV(c *ginext.Context, data any, filename string) {
 		writeErr = writeItems(writer, values)
 	case models.Analytics:
 		writeErr = writeAnalytics(writer, values)
+	case []models.GroupedAnalytics:
+		writeErr = writeGroupedAnalytics(writer, values)
 	default:
 		respondError(c, errs.ErrUnsupportedType)
 		return
@@ -162,6 +172,30 @@ func writeAnalytics(writer *csv.Writer, a models.Analytics) error {
 
 }
 
+func writeGroupedAnalytics(w *csv.Writer, data []models.GroupedAnalytics) error {
+
+	if err := w.Write([]string{"GroupKey", "Count", "Total Income", "Total Expense", "Balance", "Average"}); err != nil {
+		return err
+	}
+
+	for _, group := range data {
+		row := []string{
+			group.GroupKey,
+			fmt.Sprintf("%d", group.Count),
+			group.TotalIncome.String(),
+			group.TotalExpense.String(),
+			group.Balance.String(),
+			group.AvgAmount.String(),
+		}
+		if err := w.Write(row); err != nil {
+			return err
+		}
+	}
+
+	return nil
+
+}
+
 func respondError(c *ginext.Context, err error) {
 	if err != nil {
 		status, msg := mapErrorToStatus(err)
@@ -178,6 +212,7 @@ func mapErrorToStatus(err error) (int, string) {
 		errors.Is(err, errs.ErrMissingType),
 		errors.Is(err, errs.ErrInvalidSortOrder),
 		errors.Is(err, errs.ErrInvalidSortBy),
+		errors.Is(err, errs.ErrInvalidGroupBy),
 		errors.Is(err, errs.ErrInvalidType),
 		errors.Is(err, errs.ErrZeroAmount),
 		errors.Is(err, errs.ErrNegativeAmount),

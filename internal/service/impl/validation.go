@@ -130,13 +130,23 @@ func validateOptions(options *models.Options) error {
 	}
 
 	switch options.SortBy {
-	case "", "date", "amount", "type":
+	case "", "date", "amount", "type", "category":
 	default:
 		return errs.ErrInvalidSortBy
 	}
 
+	if options.Sort == "" {
+		options.Sort = "DESC"
+	}
+
 	if options.SortBy == "" {
 		options.SortBy = defaultSortBy
+	}
+
+	switch options.GroupBy {
+	case "", "day", "week", "category":
+	default:
+		return errs.ErrInvalidGroupBy
 	}
 
 	return nil

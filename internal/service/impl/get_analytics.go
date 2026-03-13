@@ -5,7 +5,7 @@ import (
 	"context"
 )
 
-func (s *Service) GetAnalytics(ctx context.Context, options models.Options) (models.Analytics, error) {
+func (s *Service) GetAnalytics(ctx context.Context, options models.Options) (any, error) {
 
 	if err := validateOptions(&options); err != nil {
 		return models.Analytics{}, err

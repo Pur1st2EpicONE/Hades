@@ -36,3 +36,12 @@ type Analytics struct {
 	Median       decimal.Decimal
 	Percentile90 decimal.Decimal
 }
+
+type GroupedAnalytics struct {
+	GroupKey     string
+	Count        int
+	TotalIncome  decimal.Decimal
+	TotalExpense decimal.Decimal
+	Balance      decimal.Decimal
+	AvgAmount    decimal.Decimal
+}

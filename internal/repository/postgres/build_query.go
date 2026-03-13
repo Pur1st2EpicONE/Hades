@@ -7,18 +7,19 @@ import (
 
 func buildQuery(options models.Options) (string, []any) {
 
-	condition, args := buildCondition(options)
+	condition, args := buildWhere(options)
 
 	query := `
 
 	SELECT id, type, amount, date, category, description, created_at
-	FROM items` + condition
+	FROM items` + condition + fmt.Sprintf(`
+	ORDER BY %s %s`, options.SortBy, options.Sort)
 
 	return query, args
 
 }
 
-func buildCondition(options models.Options) (string, []any) {
+func buildWhere(options models.Options) (string, []any) {
 
 	condition := ` WHERE TRUE`
 	args := []any{}
@@ -46,10 +47,6 @@ func buildCondition(options models.Options) (string, []any) {
 		condition += fmt.Sprintf(` AND category = $%d`, argIndex)
 		args = append(args, options.Category)
 		argIndex++
-	}
-
-	if options.Sort != "" {
-		condition += fmt.Sprintf(`ORDER BY %s %s`, options.SortBy, options.Sort)
 	}
 
 	return condition, args

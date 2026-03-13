@@ -16,7 +16,7 @@ type Storage interface {
 	CreateItem(ctx context.Context, item models.Item) (int, error)
 	UpdateItem(ctx context.Context, itemID int, updatedItem models.Item) (models.Item, error)
 	DeleteItem(ctx context.Context, itemID int) error
-	GetAnalytics(ctx context.Context, options models.Options) (models.Analytics, error)
+	GetAnalytics(ctx context.Context, options models.Options) (any, error)
 	Close()
 }
 
