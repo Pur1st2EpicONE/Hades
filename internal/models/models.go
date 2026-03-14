@@ -28,20 +28,20 @@ type Options struct {
 }
 
 type Analytics struct {
-	Count        int
-	TotalIncome  decimal.Decimal
-	TotalExpense decimal.Decimal
-	Balance      decimal.Decimal
-	AvgAmount    decimal.Decimal
-	Median       decimal.Decimal
-	Percentile90 decimal.Decimal
+	Count        int             `json:"count"`
+	TotalIncome  decimal.Decimal `json:"total_income"`
+	TotalExpense decimal.Decimal `json:"total_expense"`
+	Balance      decimal.Decimal `json:"balance"`
+	AvgAmount    decimal.Decimal `json:"avg_amount"`
+	Median       decimal.Decimal `json:"median"`
+	Percentile90 decimal.Decimal `json:"percentile_90"`
 }
 
 type GroupedAnalytics struct {
-	GroupKey     string
-	Count        int
-	TotalIncome  decimal.Decimal
-	TotalExpense decimal.Decimal
-	Balance      decimal.Decimal
-	AvgAmount    decimal.Decimal
+	GroupKey     string          `json:"group_key"`
+	Count        int             `json:"count"`
+	TotalIncome  decimal.Decimal `json:"total_income"`
+	TotalExpense decimal.Decimal `json:"total_expense"`
+	Balance      decimal.Decimal `json:"balance"`
+	AvgAmount    decimal.Decimal `json:"avg_amount"`
 }

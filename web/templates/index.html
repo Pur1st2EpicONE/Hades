@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Hades UI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <h1>Hades UI</h1>
+        <p class="subtitle">Personal Finance Tracker</p>
+    </header>
+
+    <section class="card">
+        <h2 class="section-title">Add Record</h2>
+        <form id="createForm" class="form-grid">
+            <div class="input-group">
+                <label for="type">Type</label>
+                <select name="type" id="type" required>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="amount">Amount</label>
+                <input name="amount" id="amount" type="number" step="0.01" placeholder="0.00" required>
+            </div>
+            <div class="input-group">
+                <label for="date">Date</label>
+                <input name="date" id="date" type="date" required>
+            </div>
+            <div class="input-group">
+                <label for="category">Category</label>
+                <input name="category" id="category" placeholder="e.g. Salary, Food" required>
+            </div>
+            <div class="input-group full-width">
+                <label for="description">Description</label>
+                <input name="description" id="description" placeholder="Optional note">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add Record</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2 class="section-title">Records</h2>
+        
+        <form id="filterForm" class="form-grid">
+            <div class="input-group">
+                <label for="from">From</label>
+                <input type="date" name="from" id="from">
+            </div>
+            <div class="input-group">
+                <label for="to">To</label>
+                <input type="date" name="to" id="to">
+            </div>
+            <div class="input-group">
+                <label for="type-filter">Type</label>
+                <select name="type" id="type-filter">
+                    <option value="">All</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="category-filter">Category</label>
+                <input name="category" id="category-filter" placeholder="Filter category">
+            </div>
+            <div class="input-group">
+                <label for="sort_by">Sort by</label>
+                <select name="sort_by" id="sort_by">
+                    <option value="date">Date</option>
+                    <option value="amount">Amount</option>
+                    <option value="category">Category</option>
+                    <option value="type">Type</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="sort">Order</label>
+                <select name="sort" id="sort">
+                    <option value="DESC">Descending</option>
+                    <option value="ASC">Ascending</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <button type="button" id="exportCSV" class="btn btn-secondary">Export CSV</button>
+            </div>
+        </form>
+
+        <table id="itemsTable" class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th class="actions-col"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2 class="section-title">Analytics</h2>
+        <form id="analyticsForm" class="form-grid">
+            <div class="input-group">
+                <label for="analytics-from">From</label>
+                <input type="date" name="from" id="analytics-from">
+            </div>
+            <div class="input-group">
+                <label for="analytics-to">To</label>
+                <input type="date" name="to" id="analytics-to">
+            </div>
+            <div class="input-group">
+                <label for="group_by">Group by</label>
+                <select name="group_by" id="group_by">
+                    <option value="">Overall Summary</option>
+                    <option value="day">By Day</option>
+                    <option value="week">By Week</option>
+                    <option value="category">By Category</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Show Analytics</button>
+                <button type="button" id="exportAnalytics" class="btn btn-secondary">Export CSV</button>
+            </div>
+        </form>
+        <div id="analyticsResult" class="analytics-result"></div>
+    </section>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
