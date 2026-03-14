@@ -1,4 +1,4 @@
-.PHONY: all up down reset local migrate-up migrate-down test postgres rabbit app_logs postgres_logs rabbit_logs_logs queues lint .env .env.example help
+.PHONY: all up down reset local migrate-up migrate-down test postgres app_logs postgres_logs lint .env .env.example help
 .POSIX:
 .SILENT:
 

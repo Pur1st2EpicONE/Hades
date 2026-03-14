@@ -16,6 +16,8 @@ server:
 
 # Database (PostgreSQL) configuration
 database:
+  goose_dialect: "postgres"                    # Dialect used by goose migrations
+  goose_migrations_directory: "./migrations"   # Directory containing migration files
   host: postgres                               # Database host
   port: "5432"                                 # Database port; must match the exposed port in docker-compose.full.yaml
   dbname: hades-db                             # Database name
