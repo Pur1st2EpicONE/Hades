@@ -1,3 +1,4 @@
+// Package handler wires HTTP handlers, serves static files and the HTML frontend.
 package handler
 
 import (
@@ -11,6 +12,8 @@ import (
 
 const templatePath = "web/templates/index.html"
 
+// NewHandler creates and returns an http.Handler with all routes configured.
+// It sets up static file serving, API v1 group, and the root HTML page.
 func NewHandler(service service.Service) http.Handler {
 
 	handler := ginext.New("")
@@ -34,6 +37,7 @@ func NewHandler(service service.Service) http.Handler {
 
 }
 
+// homePage renders the main HTML template for the root route.
 func homePage(t *template.Template) ginext.HandlerFunc {
 	return func(c *ginext.Context) {
 		if err := t.Execute(c.Writer, nil); err != nil {

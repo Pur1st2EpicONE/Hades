@@ -4,6 +4,8 @@ import (
 	"github.com/wb-go/wbf/ginext"
 )
 
+// GetItems handles GET /api/v1/items.
+// It parses query parameters, calls service.GetItems and returns paginated items.
 func (h *Handler) GetItems(c *ginext.Context) {
 
 	options, err := parseQuery(c)

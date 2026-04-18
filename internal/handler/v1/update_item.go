@@ -8,6 +8,8 @@ import (
 	"github.com/wb-go/wbf/ginext"
 )
 
+// UpdateItem handles PUT /api/v1/items/:id.
+// It parses ID, binds JSON, validates date, calls service.UpdateItem and returns the updated item.
 func (h *Handler) UpdateItem(c *ginext.Context) {
 
 	itemID, err := strconv.Atoi(c.Param("id"))

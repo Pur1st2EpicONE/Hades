@@ -15,6 +15,8 @@ import (
 
 const dateLayout = "2006-01-02"
 
+// parseQuery extracts query parameters from the request and returns a models.Options struct.
+// It parses 'from' and 'to' date strings, and normalizes sorting/grouping/export fields.
 func parseQuery(c *ginext.Context) (models.Options, error) {
 
 	fromStr := c.Query("from")
@@ -50,6 +52,8 @@ func parseQuery(c *ginext.Context) (models.Options, error) {
 
 }
 
+// parseTime parses a time string using multiple common layouts.
+// Returns UTC time or an error from errs.ErrMissingDate or errs.ErrInvalidDate.
 func parseTime(timeStr string) (time.Time, error) {
 	if timeStr == "" {
 		return time.Time{}, errs.ErrMissingDate
@@ -73,14 +77,18 @@ func parseTime(timeStr string) (time.Time, error) {
 	return time.Time{}, errs.ErrInvalidDate
 }
 
+// respondCreated sends a 201 Created response with the given data wrapped under "result".
 func respondCreated(c *ginext.Context, response any) {
 	c.JSON(http.StatusCreated, ginext.H{"result": response})
 }
 
+// respondOK sends a 200 OK response with the given data wrapped under "result".
 func respondOK(c *ginext.Context, response any) {
 	c.JSON(http.StatusOK, ginext.H{"result": response})
 }
 
+// fmtRespond checks if the export format is CSV; if yes, it writes CSV, otherwise responds with JSON.
+// The csvFilename parameter is used as the base name for the generated file.
 func fmtRespond(c *ginext.Context, data any, csvFilename string) {
 	if c.Query("export") == "csv" {
 		writeCSV(c, data, csvFilename)
@@ -89,6 +97,8 @@ func fmtRespond(c *ginext.Context, data any, csvFilename string) {
 	respondOK(c, data)
 }
 
+// writeCSV writes the given data as a CSV attachment.
+// It sets Content-Type and Content-Disposition headers and calls the appropriate writer based on data type.
 func writeCSV(c *ginext.Context, data any, filename string) {
 
 	cd := fmt.Sprintf(`attachment; filename="%s_%s.csv"`, filename, time.Now().Format(dateLayout))
@@ -122,6 +132,7 @@ func writeCSV(c *ginext.Context, data any, filename string) {
 
 }
 
+// writeItems writes a slice of models.Item as CSV rows, including a header row.
 func writeItems(writer *csv.Writer, items []models.Item) error {
 
 	if err := writer.Write([]string{"ID", "Type", "Amount", "Date", "Category", "Description"}); err != nil {
@@ -146,6 +157,7 @@ func writeItems(writer *csv.Writer, items []models.Item) error {
 
 }
 
+// writeAnalytics writes a single Analytics struct as a key-value CSV.
 func writeAnalytics(writer *csv.Writer, a models.Analytics) error {
 
 	if err := writer.Write([]string{"Metric", "Value"}); err != nil {
@@ -172,6 +184,7 @@ func writeAnalytics(writer *csv.Writer, a models.Analytics) error {
 
 }
 
+// writeGroupedAnalytics writes grouped analytics data as CSV rows with a header.
 func writeGroupedAnalytics(w *csv.Writer, data []models.GroupedAnalytics) error {
 
 	if err := w.Write([]string{"GroupKey", "Count", "Total Income", "Total Expense", "Balance", "Average"}); err != nil {
@@ -196,6 +209,8 @@ func writeGroupedAnalytics(w *csv.Writer, data []models.GroupedAnalytics) error 
 
 }
 
+// respondError sends an appropriate HTTP error response based on the domain error.
+// It uses mapErrorToStatus to determine status code and message.
 func respondError(c *ginext.Context, err error) {
 	if err != nil {
 		status, msg := mapErrorToStatus(err)
@@ -203,6 +218,8 @@ func respondError(c *ginext.Context, err error) {
 	}
 }
 
+// mapErrorToStatus converts domain errors to HTTP status codes and returns the error message.
+// It handles validation errors (400), not found (404), and defaults to 500.
 func mapErrorToStatus(err error) (int, string) {
 
 	switch {

@@ -7,6 +7,8 @@ import (
 	"github.com/wb-go/wbf/ginext"
 )
 
+// CreateItem handles POST /api/v1/items.
+// It binds JSON, validates date, calls service.CreateItem and returns the created item.
 func (h *Handler) CreateItem(c *ginext.Context) {
 
 	var request CreateItemDTO

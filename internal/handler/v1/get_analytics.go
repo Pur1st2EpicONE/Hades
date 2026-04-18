@@ -4,6 +4,8 @@ import (
 	"github.com/wb-go/wbf/ginext"
 )
 
+// GetAnalytics handles GET /api/v1/analytics.
+// It parses query parameters, calls service.GetAnalytics and returns aggregated data.
 func (h *Handler) GetAnalytics(c *ginext.Context) {
 
 	options, err := parseQuery(c)
