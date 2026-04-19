@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+// buildQuery constructs a SELECT query for retrieving items with sorting.
+// It returns the full SQL query and its arguments.
 func buildQuery(options models.Options) (string, []any) {
 
 	condition, args := buildWhere(options)
@@ -19,6 +21,9 @@ func buildQuery(options models.Options) (string, []any) {
 
 }
 
+// buildWhere constructs the WHERE clause based on filter options.
+// It returns a condition string with PostgreSQL placeholders ($1, $2, etc.)
+// and a slice of arguments in the same order.
 func buildWhere(options models.Options) (string, []any) {
 
 	condition := ` WHERE TRUE`
@@ -46,7 +51,6 @@ func buildWhere(options models.Options) (string, []any) {
 	if options.Category != "" {
 		condition += fmt.Sprintf(` AND category = $%d`, argIndex)
 		args = append(args, options.Category)
-		argIndex++
 	}
 
 	return condition, args

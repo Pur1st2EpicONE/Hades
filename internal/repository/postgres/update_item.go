@@ -10,6 +10,10 @@ import (
 	"github.com/wb-go/wbf/retry"
 )
 
+// UpdateItem updates an existing item in the database by its ID.
+// It returns the updated item with all fields populated.
+// If no rows are updated (item not found), it returns sql.ErrNoRows.
+// The operation uses a retry strategy defined in the configuration.
 func (s Storage) UpdateItem(ctx context.Context, itemID int, updatedItem models.Item) (models.Item, error) {
 
 	row, err := s.db.QueryRowWithRetry(ctx, retry.Strategy(s.config.QueryRetryStrategy), `

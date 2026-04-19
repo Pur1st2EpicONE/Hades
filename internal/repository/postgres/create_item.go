@@ -7,6 +7,9 @@ import (
 	"github.com/wb-go/wbf/retry"
 )
 
+// CreateItem inserts a new item record into the database.
+// It returns the auto-generated ID of the newly created item.
+// The query uses a retry strategy defined in the configuration for transient errors.
 func (s Storage) CreateItem(ctx context.Context, item models.Item) (int, error) {
 
 	row, err := s.db.QueryRowWithRetry(ctx, retry.Strategy(s.config.QueryRetryStrategy), `

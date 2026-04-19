@@ -8,6 +8,9 @@ import (
 	"github.com/wb-go/wbf/retry"
 )
 
+// DeleteItem removes an item from the database by its ID.
+// It returns errs.ErrItemNotFound if no rows were affected.
+// The operation uses a retry strategy defined in the configuration.
 func (s Storage) DeleteItem(ctx context.Context, itemID int) error {
 
 	row, err := s.db.ExecWithRetry(ctx, retry.Strategy(s.config.QueryRetryStrategy), `

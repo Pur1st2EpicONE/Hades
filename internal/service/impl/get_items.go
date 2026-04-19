@@ -5,6 +5,8 @@ import (
 	"context"
 )
 
+// GetItems retrieves items matching the filter options.
+// It validates options before delegating to storage.
 func (s *Service) GetItems(ctx context.Context, options models.Options) ([]models.Item, error) {
 
 	if err := validateOptions(&options); err != nil {

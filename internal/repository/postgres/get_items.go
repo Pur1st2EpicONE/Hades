@@ -8,6 +8,9 @@ import (
 	"github.com/wb-go/wbf/retry"
 )
 
+// GetItems retrieves a list of items from the database matching the given filter options.
+// It builds a query with WHERE conditions and ORDER BY clause based on the options.
+// The operation uses a retry strategy defined in the configuration.
 func (s Storage) GetItems(ctx context.Context, options models.Options) ([]models.Item, error) {
 
 	query, args := buildQuery(options)
@@ -16,7 +19,7 @@ func (s Storage) GetItems(ctx context.Context, options models.Options) ([]models
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var items []models.Item
 	for rows.Next() {

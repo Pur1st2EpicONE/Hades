@@ -5,6 +5,7 @@ import (
 	"context"
 )
 
+// GetAnalytics retrieves aggregated statistics based on the filter options.
 func (s *Service) GetAnalytics(ctx context.Context, options models.Options) (any, error) {
 
 	if err := validateOptions(&options); err != nil {

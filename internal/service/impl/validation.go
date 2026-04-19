@@ -10,12 +10,13 @@ import (
 )
 
 const (
-	income        = "income"
-	expense       = "expense"
-	maxAmount     = 1e9
-	defaultSortBy = "date"
+	income        = "income"  // income is the allowed value for income type.
+	expense       = "expense" // expense is the allowed value for expense type.
+	maxAmount     = 1e9       // maxAmount is the maximum allowed transaction amount (1,000,000,000).
+	defaultSortBy = "date"    // defaultSortBy is the default field for sorting items.
 )
 
+// validateItem performs complete validation of an Item before creation or update.
 func validateItem(item models.Item) error {
 
 	if err := validateType(item.Type); err != nil {
@@ -42,6 +43,7 @@ func validateItem(item models.Item) error {
 
 }
 
+// validateType ensures the type is either "income" or "expense".
 func validateType(t string) error {
 
 	t = strings.TrimSpace(t)
@@ -58,6 +60,7 @@ func validateType(t string) error {
 
 }
 
+// validateAmount ensures the amount is positive, non-zero, and below the maximum.
 func validateAmount(amount decimal.Decimal) error {
 
 	if amount.LessThan(decimal.Zero) {
@@ -76,6 +79,7 @@ func validateAmount(amount decimal.Decimal) error {
 
 }
 
+// validateDate ensures the date is within the allowed range (±1 year from now).
 func validateDate(d time.Time) error {
 
 	now := time.Now().UTC()
@@ -92,6 +96,7 @@ func validateDate(d time.Time) error {
 
 }
 
+// validateCategory ensures the category is non-empty and between 3 and 100 characters.
 func validateCategory(category string) error {
 
 	category = strings.TrimSpace(category)
@@ -112,6 +117,7 @@ func validateCategory(category string) error {
 
 }
 
+// validateDescription ensures the description does not exceed 1000 characters.
 func validateDescription(desc string) error {
 	if len(desc) > 1000 {
 		return errs.ErrDescriptionTooLong
@@ -119,6 +125,8 @@ func validateDescription(desc string) error {
 	return nil
 }
 
+// validateOptions validates and normalizes query options (sorting, grouping, filtering).
+// It sets default values for missing optional fields.
 func validateOptions(options *models.Options) error {
 
 	if options.Type != "" && options.Type != income && options.Type != expense {

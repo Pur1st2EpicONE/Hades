@@ -9,6 +9,8 @@ import (
 	"github.com/wb-go/wbf/retry"
 )
 
+// GetAnalytics returns aggregated statistics based on the filter options.
+// If GroupBy is provided, it returns []models.GroupedAnalytics; otherwise models.Analytics.
 func (s Storage) GetAnalytics(ctx context.Context, options models.Options) (any, error) {
 
 	where, args := buildWhere(options)
@@ -20,6 +22,7 @@ func (s Storage) GetAnalytics(ctx context.Context, options models.Options) (any,
 
 }
 
+// grouped returns analytics grouped by day, week, or category.
 func (s Storage) grouped(ctx context.Context, where string, args []any, groupBy string) ([]models.GroupedAnalytics, error) {
 
 	group := ""
@@ -50,7 +53,7 @@ func (s Storage) grouped(ctx context.Context, where string, args []any, groupBy 
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute grouped query: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var result []models.GroupedAnalytics
 	for rows.Next() {
@@ -76,6 +79,7 @@ func (s Storage) grouped(ctx context.Context, where string, args []any, groupBy 
 
 }
 
+// ungrouped returns single-row analytics with median and percentile calculations.
 func (s Storage) ungrouped(ctx context.Context, where string, args []any) (models.Analytics, error) {
 
 	query := `

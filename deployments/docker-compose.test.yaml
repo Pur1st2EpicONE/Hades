@@ -10,7 +10,7 @@ services:
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: hermes_test   
+      DB_NAME: hades_test   
       DB_HOST: postgres-test 
       DB_PORT: 5432
     depends_on:
@@ -27,7 +27,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: hermes_test  
+      POSTGRES_DB: hades_test  
     ports:
       - 5433:5432
     healthcheck:

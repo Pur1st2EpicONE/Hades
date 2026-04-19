@@ -16,6 +16,8 @@ server:
 
 # Database (PostgreSQL) configuration
 database:
+  goose_dialect: "postgres"                    # Dialect used by goose migrations
+  goose_migrations_directory: "./migrations"   # Directory containing migration files
   host: postgres-test                          # Database host
   port: "5432"                                 # Database port; must match the exposed port in docker-compose.full.yaml
   dbname: hades_test                           # Database name
@@ -24,6 +26,6 @@ database:
   max_idle_conns: 10                           # Maximum number of idle connections
   conn_max_lifetime: 30m                       # Maximum lifetime of a database connection
   query_retry_strategy:
-    attempts: 3                                # Number of retry attempts for failed DB queries
+    attempts: 1                                # Number of retry attempts for failed DB queries
     delay: 200ms                               # Initial delay between retries
     backoff: 2                                 # Backoff multiplier for retry delay

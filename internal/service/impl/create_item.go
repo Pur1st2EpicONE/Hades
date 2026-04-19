@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// CreateItem validates the item, initializes its CreatedAt timestamp,
+// saves it to storage, and returns the item with its assigned ID.
 func (s *Service) CreateItem(ctx context.Context, item models.Item) (models.Item, error) {
 
 	if err := validateItem(item); err != nil {
@@ -25,6 +27,7 @@ func (s *Service) CreateItem(ctx context.Context, item models.Item) (models.Item
 
 }
 
+// initialize sets the CreatedAt timestamp to the current UTC time.
 func initialize(item *models.Item) {
 	item.CreatedAt = time.Now().UTC()
 }

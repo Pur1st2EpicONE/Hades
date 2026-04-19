@@ -6,6 +6,8 @@ import (
 	"errors"
 )
 
+// DeleteItem removes an item by ID.
+// If the item does not exist, it returns errs.ErrItemNotFound.
 func (s *Service) DeleteItem(ctx context.Context, itemID int) error {
 
 	if err := s.storage.DeleteItem(ctx, itemID); err != nil {
