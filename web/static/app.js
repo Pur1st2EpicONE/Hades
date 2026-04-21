@@ -13,7 +13,7 @@ async function loadItems(query = "") {
             <td>${item.id}</td>
             <td><span class="${isIncome ? "income" : "expense"}">${item.type}</span></td>
             <td>${parseFloat(item.amount).toFixed(2)}</td>
-            <td>${new Date(item.date).toLocaleDateString("ru-RU")}</td>
+            <td>${new Date(item.date).toLocaleDateString("en-GB")}</td>
             <td>${item.category}</td>
             <td>${item.description || ""}</td>
             <td><button data-id="${item.id}" class="deleteBtn">🗑</button></td>
